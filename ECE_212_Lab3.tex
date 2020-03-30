@@ -120,7 +120,25 @@ Introduction to\\ Subroutines \\
 
 
 \section{Introduction}
+In a program, we often need to perform various sub-tasks many times. For example, we may need to sort numbers in an integer array. We could write the block of instructions that performs this sub-task over and over again, but this would be tedious and a waste of memory space. Therefore, we code these blocks of repeated instructions somewhere in memory and any time we need to use this block of instructions, we simply tell the program to branch to the location of the block of instructions. This block of instructions or sub-tasks are called \textit{subroutines}. The instruction that branches to the subroutine is called a \textit{call} instruction. Furthermore, the calling program is called the \textit{caller} and the subroutine itself is called the \textit{callee}. Once we reach the last instruction in a subroutine (called the \textit{return} instruction), the subroutine returns to the program that called it. 
 
+In this lab, our objective was to gain experience using subroutines by writing subroutines for a statistics program. In specific, we wanted to gain experience
+\begin{enumerate}
+\item using the STACK (Push and Pop),
+\item dividing up existing code into subroutines,
+\item calling subroutines/functions, and
+\item using basic parameter passing techniques.
+\end{enumerate}
+The lab was broken up into three parts. For part A of the lab, we created a program that prompts the user to enter numbers using the keyboard. We also checked that the input met certain restrictions, namely
+\begin{itemize}
+\item the number of entries must be between 3 and 15,
+\item the divisor must be between 2 and 5, and
+\item the values entered must be positive.
+\end{itemize}
+
+For part B of the lab, we created a subroutine that, based on the input, finds the min, max, mean, and how many numbers were divisible by the divisor and what those numbers were.
+
+For part C of the lab, we created a subroutine that displayed the results from part B on the MTTTY. Furthermore, we made the subroutine redisplay all the numbers that the user input at the beginning. 
 
 \section{Design}
 \subsection{Part A}

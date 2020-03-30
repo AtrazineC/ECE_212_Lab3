@@ -1,0 +1,178 @@
+\documentclass[10pt, letterpaper, titlepage]{article} % Set font here.
+% Use 'article' for simple documents; use 'report' for larger documents with chapters;
+% use 'book' for even larger documents with parts.
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{color,graphicx,overpic} 
+\usepackage{fancyhdr} % header/footer stuff
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{mathtools} % more math stuff
+\usepackage{siunitx} % for SI units, ex. $3.5 ~ \si{kg.s^{-2}}$
+\usepackage{hyperref} % for hyperlinks
+\usepackage{apple_emoji}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{float}
+\usepackage{blindtext}
+\usepackage{longtable}
+\usepackage{scrextend}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[framemethod=tikz]{mdframed}
+\usepackage{calc}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage[normalem]{ulem}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\DeclareMathOperator{\di}{d\!} % derivative operator symbol, ex. $\int f(x) \di x$
+\newcommand{\Eval}[3]{\left.#1\right\rvert_{#2}^{#3}} % evaluation bar (ex. evaluating integral or $\Eval{F(x)}{0}{2}$)
+\newcommand*\B{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{BigB.png}}
+\newcommand*\fire{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{Fire.png}}
+
+\definecolor{comment}{RGB}{140, 140, 140}
+\definecolor{text}{RGB}{204, 204, 204}
+\definecolor{string}{rgb}{0.58,0,0}
+\definecolor{backcolour}{RGB}{27, 30, 39}
+\definecolor{variable}{RGB}{244, 63, 78}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{comment},
+    keywordstyle=\color{variable},
+    numberstyle=\tiny\color{text},
+    stringstyle=\color{string},
+    basicstyle=\ttfamily\footnotesize\color{text},
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=-10pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\lstdefinelanguage
+   [x64]{Assembler}     % add a "x64" dialect of Assembler
+   {morekeywords={	
+   }} % etc.
+   
+\lstdefinelanguage[Motorola68k]{Assembler}{%
+	morekeywords={	a0, a1, a2, a3, a4, a5, a6, a7, %
+   					d0, d1, d2, d3, d4, d5, d6, d7, %
+				   	ABCD,ADD,%
+					ADDA,ADDI,ADDQ,ADDX,AND,ANDI,ASL,ASR,BCC,BLS,BCS,BLT,BEQ,BMI,BF,BNE,%
+					BGE,BPL,BGT,BT,BHI,BVC,BLE,BVS,BCHG,BCLR,BRA,BSET,BSR,BTST,CHK,CLR,%
+					CMP,CMPA,CMPI,CMPM,DBCC,DBLS,DBCS,DBLT,DBEQ,DBMI,DBF,DBNE,DBGE,DBPL,%
+					DBGT,DBT,DBHI,DBVC,DBLE,DBVS,DIVS,DIVU,EOR,EORI,EXG,EXT,ILLEGAL,JMP,%
+					JSR,LEA,LINK,LSL,LSR,MOVE,MOVEA,MOVEM,MOVEP,MOVEQ,MULS,MULU,NBCD,NEG,%
+					NEGX,NOP,NOT,OR,ORI,PEA,RESET,ROL,ROR,ROXL,ROXR,RTE,RTR,RTS,SBCD,%
+					SCC,SLS,SCS,SLT,SEQ,SMI,SF,SNE,SGE,SPL,SGT,ST,SHI,SVC,SLE,SVS,STOP,%
+					SUB,SUBA,SUBI,SUBQ,SUBX,SWAP,TAS,TRAP,TRAPV,TST,UNLK},%
+					sensitive=false,%
+					morecomment=[l]*,%
+					morecomment=[l] }[keywords,comments,strings]
+
+\lstset{language=[Motorola68k]Assembler}
+\lstset{style=mystyle}
+
+\definecolor{mycolor}{rgb}{0, 0, 0}
+  
+
+\geometry{top=2.7cm,left=1.8cm,right=1.8cm,bottom=2.7cm}
+\setlength{\headheight}{17pt}
+\renewcommand{\baselinestretch}{1.5} 
+\setlength{\parskip}{0.3cm}
+\setlength{\parindent}{0.6cm}
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+\newcommand{\barrows}{\textcolor{blue}{\Longrightarrow}\quad}
+\newcommand{\barrow}{\quad\textcolor{blue}{\Longrightarrow}\quad}  
+\newcommand{\sumi}[1][1]{ \sum_{n={#1}}^{\infty} }
+\newcommand{\limi}[1][n]{ \lim_{{#1}\to\infty} }
+
+\title{\textbf{\Huge{
+\begin{center}
+Introduction to\\ Subroutines \\
+\end{center}
+}}}
+\author{\B enjamin Kong | 1573684\\Lora Ma ||||| 1570935\\ \\ECE 212 Lab Section H11}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\B enjamin Kong \& Lora Ma}
+\lhead{\textit{Introduction to Subroutines}}
+\rfoot{Page \thepage}
+
+\begin{document} 
+\pagenumbering{gobble} 
+\maketitle 
+\thispagestyle{empty}
+\tableofcontents 
+\newpage
+\pagenumbering{arabic}
+
+\begin{multicols*}{2}
+
+
+\section{Introduction}
+
+
+\section{Design}
+\subsection{Part A}
+
+%\begin{figure}[H]
+%   \includegraphics[width=0.45\textwidth]{part1a.png}
+%   \centering  
+%   \caption{UML. diagram for part 1, part A.} 
+%   \label{figure:1}
+%\end{figure}
+
+\subsection{Part B}
+
+
+\subsection{Part C}
+
+
+\section{Testing}
+\subsection{Part A}
+
+
+\subsection{Part B}
+
+
+\subsection{Part C}
+
+
+\section{Questions}
+
+
+\section{Conclusion}
+
+
+
+\end{multicols*}
+
+\newpage
+
+\section{Appendix}
+\subsection{Part A Assembler Code}
+\begin{lstlisting}
+	
+\end{lstlisting}
+
+\subsection{Part B Assembler Code}
+\begin{lstlisting}
+	
+\end{lstlisting}
+
+\subsection{Part C Assembler Code}
+\begin{lstlisting}
+	
+\end{lstlisting}
+
+\end{document}

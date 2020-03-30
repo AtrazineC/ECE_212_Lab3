@@ -168,8 +168,10 @@ Furthermore, we made the subroutine re-display all the numbers that the user inp
 
 
 \section{Testing}
-\subsection{Part A}
+Due to the shutdown of the university, we were unable to test our code in-person. However, we have outlined how we would have tested our code below for each section.
 
+\subsection{Part A}
+For part A, we
 
 \subsection{Part B}
 
@@ -181,9 +183,21 @@ Furthermore, we made the subroutine re-display all the numbers that the user inp
 \begin{enumerate}
 \item \textit{Is it always necessary to implement either callee or caller preservation of registers when calling a subroutine? Why?}
 
+It is always necessary. 
+A subroutine may be running in several different parts of the program and the data and address registers being used by the subroutine could be overwritten. 
+If the program was using these data or address registers to store information and this information gets overwritten by the subroutine, it could cause errors or cause unexpected behavior.
+
 \item \textit{Is it always necessary to clean up the stack? Why?}
 
+It is always necessary. 
+Let's say the subroutine only restores old register values, but doesn't clean up the stack. 
+If the program that called the subroutine relies on information from the stack, the offset of the stack pointer may not be correct and the program would not be accessing the correct information. 
+
 \item \textit{If a proper check for the getstring function was not provided and you have access to the buffer, how would you check to see if a valid \# was entered? A detailed description is sufficient. You do not need to implement this in your code.}
+
+In order to check if a valid \# was input, our program would iterate through each element in the buffer. 
+For each element, we would check to see if the character was between `0' and `9'; this could be accomplished using branches. 
+If the input was not valid, a message could be output signifying an invalid entry and a prompt could be displayed to have the user re-enter a valid input. 
 \end{enumerate}
 
 \section{Conclusion}
@@ -197,7 +211,6 @@ In part B of the lab, we wrote a program that, based on the previous input, foun
 In part C of the lab, we finished our program and made it so that it displayed the values we found in part B. 
 These two parts of the lab were completed successfully, as it was evident that the output values matched with the expected output. 
 
-
 \end{multicols*}
 
 \newpage
@@ -205,17 +218,344 @@ These two parts of the lab were completed successfully, as it was evident that t
 \section{Appendix}
 \subsection{Part A Assembler Code}
 \begin{lstlisting}
+	WelcomePrompt:
+	/*Write your program here******************************************/
 	
+	/* Backup registers */
+	lea -40(%sp), %sp
+	movem.l %d2-%d7/%a2-%a5, (%sp)
+	
+	/* Print Welcome message */
+	Welcomemsg:
+	  pea Welcome /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	
+	Entries:
+	  pea EntriesPrompt /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	  jsr getstring /*Get user input*/
+	  bra CheckEntry /*Check entry*/
+	
+	CheckEntry:
+	  cmpi.l #15, %d0 /* Compare d0 with 15 */
+	  bgt InvalidEntry /* If greater than 15, go to InvalidEntry */
+	  cmpi.l #3, %d0 /* Compare d0 with 3 */
+	  blt InvalidEntry /* if less than 3, go to InvalidEntry */
+	  cmpi.l #0,  %d0 /* compare d0 with 0 */
+	  beq exit /*If equal to zero, exit */
+	  move.l %d0, 48(%sp) /* Move number of entries onto stack */
+	  move.l %d0, %d2 /* Create counter from input */
+	
+	InvalidEntry:
+	  pea Invalid /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	  jsr getstring /*Get user input*/
+	
+	/* Ask for divisor */
+	Divisormsg:
+	  pea  DivisorPrompt /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	  jsr getstring /*Get user input*/
+	  bra CheckDiv
+	
+	InvalidDiv:
+	  pea Invalid /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	  jsr getstring /*Get user input*/
+	
+	CheckDiv:
+	  cmpi.l #2, %d0 /*Compare d0 with 2*/
+	  blt InvalidDiv /*if less than, go to InvalidDiv*/
+	  cmpi.l #5, %d0 /*Compare d0 with 5*/
+	  bgt InvalidDiv /*If greater than 5, go to InvalidDiv*/
+	  move.l %d0, 44(%sp) /* Move divisor number onto stack */
+	
+	movea.l     #0x43000000, %a2 /* Pointer to array storing data */
+	Numbermsg:
+	  pea NumberPrompt /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	  jsr getstring /*Get user input*/
+	  bra CheckNum /* go to CheckNum */
+	
+	InvalidNum:
+	  pea Invalid /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	  jsr getstring /*Get user input*/
+	
+	CheckNum:
+	  cmpi.l #0, %d0 /* Check if negative number entered */
+	  blt InvalidNum /*Invalid if negative*/
+	  move.l %d0, (%a2)+ /*If positive, move to array, increment pointer*/
+	  sub.l #1, %d2 /*Decrement counter*/
+	  cmpi.l #1, %d2
+	  beq LastNummsg /*If last number, go to LastNummsg*/
+	  bra Numbermsg /*Otherwise, check next number*/
+	
+	LastNummsg:
+	  pea LastNumPrompt /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	  jsr getstring /*Get user input*/
+	  bra LastCheck /*Go to LastCheck*/
+	
+	InvalidLast:
+	  pea Invalid /*Push string to stack*/
+	  jsr iprintf /*Display string */
+	  adda.l #4, %sp /*Pop string location from stack*/
+	  jsr cr /*New Line*/
+	  jsr getstring /*Get user input*/
+	
+	LastCheck:
+	  cmpi.l #0, %d0
+	  blt InvalidLast
+	  move.l %d0, (%a2)
+	
+	exit:
+	  /* Restore registers */
+	  movem.l %d2-%d7/%a2-%a5, (%sp)
+	  lea 40(%sp),%sp
+	
+	rts
+	
+	/*End of Subroutine ***********************************************s***/
+	.data
+	/*All Strings placed here **************************************************/
+	
+	Welcome:
+	.string "Welcome to Wing's Stats Program"
+	
+	EntriesPrompt:
+	.string "Please enter the number (3min-15max) of entries followed by 'enter'"
+	
+	DivisorPrompt:
+	.string "Please enter the divisor (2min-5max) followed by 'enter'"
+	
+	NumberPrompt:
+	.string "Please enter a number (positive only)"
+	
+	LastNumPrompt:
+	.string "Please enter the last number (positive only)"
+	
+	Invalid:
+	.string "Invalid entry, please enter a proper value."
+	
+	/*End of Strings **************************************************/
 \end{lstlisting}
 
 \subsection{Part B Assembler Code}
 \begin{lstlisting}
+	Stats:
+	/*Write your program here******************************************/
 	
+	/* Backup registers */
+	lea -40(%sp),%sp
+	movem.l %d2-%d7/%a2-%a5, (%sp)
+	
+	FindMin:
+	  move.l (%a2)+, %d2
+	  move.l 48(%sp), %d4 /*Initialize counter*/
+	
+	LoopMin:
+	  sub.l #1, %d4 /* Decrement counter */
+	  move.l (%a2)+, %d3 /* Load Next number to test */
+	  cmp.l #0, %d4 /* Check if counter done */
+	  ble FindMaxVal /* If counter done, go to FindMaxVal */
+	  cmp.l %d3, %d2 /* Compare stored and new number */
+	  blt LoopMin /* If stored is smaller, repeat checks */
+	  move.l %d3, %d2 /* If stored is larger, save new number */
+	  bra LoopMin /* Repeat loop */
+	
+	FindMaxVal:
+	  move.l %d2, (%a3)+ /* Save min number */
+	  movea.l #0x43000000, %a2 /* Reinitialize counter to data array */
+	  move.l (%a2)+, %d2 /* Load First number */
+	  move.l 48(%sp), %d4 /* Reload Counter */
+	
+	LoopMax:
+	  sub.l #1, %d4 /* Decrement counter */
+	  move.l (%a2)+, %d3 /* Load Next number to test */
+	  cmp.l #0, %d4 /* Check if counter done */
+	  ble FindMeanVal /* If counter done, go to FindMaxVal */
+	  cmp.l %d3, %d2 /* Compare stored and new number */
+	  bgt LoopMax /* If stored is larger, repeat checks */
+	  move.l %d3, %d2 /* If stored is smaller, save new number */
+	  bra LoopMax /* Repeat loop */
+	
+	FindMeanVal:
+	  move.l %d2, (%a3)+ /* Save max number */
+	  movea.l #0x43000000, %a2 /* Reinitialize counter to data array */
+	  move.l 48(%sp), %d3 /* Reload Counter */
+	  clr.l %d2 /* Clear D5 to use as cum sum */
+	
+	LoopMean:
+	  add.l (%a2)+, %d2 /*Add num at address register to d2 and increment a2*/
+	  sub.l #1, %d3 /*Subtract o1 from d3*/
+	  bne LoopMean /*If not equal to zero, go to LoopMean*/
+	  divu.l 48(%sp), %d2 /*Divide total sum by amount of integers*/
+	  move.l %d2, (%a3)+ /*Move mean to output array*/
+	
+	move.l 48(%sp), %d3 /*Reload Counter*/
+	movea.l #0x43000000, %a2 /*Reinitialize counter to data array*/
+	move.l #4, %d5 /*Move #4 to d5*/
+	clr.l %d6 /*Divisor counter*/
+	
+	FindDivisible:
+	  move.l (%a2)+, %d2 /*Move data at address a2 to d2 and increment a2*/
+	  move.l %d2, %d4 /*Move data at d2 to d4*/
+	  move.l 44(%sp), %d7 /*Move stack pointer*/
+	  divu.w %d7, %d4 /*lower word contains quotient - higher word has remainder*/
+	
+	Remainder:
+	  and.l #0xFFFF0000, %d4
+	  cmp.l	#0, %d4 /*Compare #0 with d4*/
+	  bne	NotDivisible /*If not equal, go to NotDivisible*/
+	  move.l %d2,(%a3)+ /*Move value at d2 to address a3 and increment*/
+	  add.l #1, %d6		/*Increment divisor counter*/
+	  sub.l #1,%d3 /*Subtract #1 from d3*/
+	  bne FindDivisible /*if not equal to zero, go to FindDivisible*/
+	  bra exit /*else, exit*/
+	
+	NotDivisible:
+	  sub.l #1, %d3 /*Subtract 1 from d3*/
+	  bne FindDivisible /*If not equal to zero, go to FindDivisible*/
+	
+	exit:
+	  move.l %d6, 52(%sp)
+	
+	
+	movem.l (%sp), %d2-%d7/%a2-%a5
+	lea 40(%sp), %sp
+	rts
+	
+	/*End of Subroutine **************************************************/
+	.data
+	/*All Strings placed here **************************************************/
+	
+	
+	
+	/*End of Strings **************************************************/
 \end{lstlisting}
 
 \subsection{Part C Assembler Code}
 \begin{lstlisting}
+	Display:
+	/*Write your program here******************************************/
+	lea -40(%sp), %sp
+	movem.l %d2-%d7/%a2-%a5, (%sp)
 	
+	pea NumPrompt /* Push location of string to stack */
+	jsr iprintf /* Print out string */
+	adda.l #4, %sp /* Clean up stack */
+	
+	move.l 48(%sp), %d2 /* Load number */
+	move.l %d2, -(%sp) /* Store to stack */
+	jsr value /* Print number */
+	adda.l #4, %sp /* Clean up stack */
+	jsr cr /* Print newline */
+	clr.l %d3 /* Prepare counter */
+	
+	Loop: /* Counter print loop *?
+	  move.l (%a2, %d3*4), -(%sp) /* Load number to stack, using counter as index */
+	  jsr value /* Print number */
+	  jsr cr /* Print newline */
+	  adda.l #4, %sp /* Remove number from stack */
+	  add.l #1, %d3 /* Increment counter */
+	  cmp.l %d2, %d3 /* Check if done */
+	  blt Loop /* repeat if not */
+	
+	pea MinPrompt /* Push string to stack */
+	jsr iprintf /* Print out string */
+	adda.l #4, %sp /* pop stack */
+	move.l (%a3)+, -(%sp) /* Load smallest number to stack */
+	jsr value /* Print out number to stack */
+	adda.l #4, %sp /* Pop stack */
+	jsr cr /* Print newline */
+	
+	pea MaxPrompt /* Push string to stack */
+	jsr iprintf /* Print out string */
+	adda.l #4, %sp /* pop stack */
+	move.l (%a3)+, -(%sp) /* Load largest number to stack */
+	jsr value /* Print out number to stack */
+	adda.l #4, %sp /* Pop stack */
+	jsr cr /* Print newline */
+	
+	pea MeanPrompt /* Push string to stack */
+	jsr iprintf /* Print out string */
+	adda.l #4, %sp /* pop stack */
+	move.l (%a3), -(%sp) /* Load average number to stack */
+	jsr value /* Print out number to stack */
+	adda.l #4, %sp /* Pop stack */
+	jsr cr /* Print newline */
+	
+	pea Divisible1 /* Push string to stack */
+	jsr iprintf /* Print out string */
+	adda.l #4, %sp /* pop stack */
+	move.l 52(%sp), %d2 /* Load number to register */
+	move.l %d2, -(%sp) /* Push number to stack */
+	jsr value /* Print out number to stack */
+	adda.l #4, %sp /* pop stack */
+	
+	pea Divisible2 /* Push string to stack */
+	jsr iprintf /* Print out string */
+	adda.l #4, %sp /* pop stack */
+	move.l 44(%sp), %d2 /* Load number to register */
+	move.l %d2, -(%sp) /* Push number to stack */
+	jsr value /* Print out number to stack */
+	adda.l #4, %sp /* pop stack */
+	
+	jsr cr /* Print newline */
+	
+	pea EndText /* Push end text to stack */
+	jsr iprintf /* Print text */
+	adda.l #4, %sp /* Pop stack */
+	
+	jsr cr /* Print newline */
+	
+	movem.l (%sp), %d2-%d7/%a2-%a5 /* Restore registers */
+	lea 40(%sp), %sp /* Reset stack pointer */
+	
+	rts
+	
+	/*End of Subroutine **************************************************/
+	.data
+	/*All Strings placed here **************************************************/
+	NumEntriesText:
+	.string "The number of entries was "
+	
+	MinPrompt:
+	.string "Min Number = "
+	
+	MaxPrompt:
+	.string "Max Number = "
+	
+	MeanPrompt:
+	.string "Mean Number = "
+	
+	Divisible1:
+	.string "There are "
+	
+	Divisible2:
+	.string " number(s) divisble by "
+	
+	EndText:
+	.string "Program ended"
+	
+	/*End of Strings **************************************************/
 \end{lstlisting}
 
 \end{document}

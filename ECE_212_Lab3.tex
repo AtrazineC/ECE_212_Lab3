@@ -9,7 +9,7 @@
 \usepackage{mathtools} % more math stuff
 \usepackage{siunitx} % for SI units, ex. $3.5 ~ \si{kg.s^{-2}}$
 \usepackage{hyperref} % for hyperlinks
-%\usepackage{apple_emoji}
+\usepackage{apple_emoji}
 \usepackage{multicol}
 \usepackage{array}
 \usepackage{float}
@@ -28,8 +28,8 @@
 
 \DeclareMathOperator{\di}{d\!} % derivative operator symbol, ex. $\int f(x) \di x$
 \newcommand{\Eval}[3]{\left.#1\right\rvert_{#2}^{#3}} % evaluation bar (ex. evaluating integral or $\Eval{F(x)}{0}{2}$)
-%\newcommand*\B{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{BigB.png}}
-%\newcommand*\fire{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{Fire.png}}
+\newcommand*\B{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{BigB.png}}
+\newcommand*\fire{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{Fire.png}}
 
 \definecolor{comment}{RGB}{140, 140, 140}
 \definecolor{text}{RGB}{204, 204, 204}
@@ -100,11 +100,11 @@
 Introduction to\\ Subroutines \\
 \end{center}
 }}}
-\author{Benjamin Kong | 1573684\\Lora Ma ||||| 1570935\\ \\ECE 212 Lab Section H11}
+\author{\B enjamin Kong | 1573684\\Lora Ma ||||| 1570935\\ \\ECE 212 Lab Section H11}
 
 \pagestyle{fancy}
 \fancyhf{}
-\rhead{Benjamin Kong \& Lora Ma}
+\rhead{\B enjamin Kong \& Lora Ma}
 \lhead{\textit{Introduction to Subroutines}}
 \rfoot{Page \thepage}
 
@@ -152,20 +152,38 @@ For part C of the lab, we created a subroutine that displayed the results from p
 Furthermore, we made the subroutine re-display all the numbers that the user input at the beginning. 
 
 \section{Design}
-\subsection{Part A}
+The UML diagrams and assembler code for each part are in the appendix.
 
-%\begin{figure}[H]
-%   \includegraphics[width=0.45\textwidth]{part1a.png}
-%   \centering  
-%   \caption{UML. diagram for part 1, part A.} 
-%   \label{figure:1}
-%\end{figure}
+\subsection{Part A}
+For part A of the lab, our goal was to create a welcome screen that prompts the user for input and awaits input. 
+Upon receiving input, we checked if the input is valid via the following conditions:
+\begin{itemize}
+\item the number of entries must be between 3 and 15,
+\item the divisor must be between 2 and 5, and
+\item the values entered must be positive.
+\end{itemize}
+
+To prompt the user for input, we used iprintf to output strings stored at the end of the assembler code. 
+To use iprintf, we stored the addresses of the string we wanted to output on the stack before entering the subroutine. 
+At the end of the subroutine, we popped the element off the stack. 
+Further, at the end of each subroutine that prompts the user for input, we used getstring, which stores valid numbers in register \%D0. 
+If the input was invalid, we used iprintf to output an error message, prompting the user to re-enter valid input.
 
 \subsection{Part B}
+For part B of the lab, we took the input from the user and calculated some statistics from the lab. 
+These statistics were the min, max, mean, the number of numbers divisible by the divisor, and the numbers divisible by the divisor themselves. 
 
+In order to calculate these statistics, we iterated through each element the user input. 
+To find the min and max, we compared it to the currently stored min and max and updated those values accordingly if the element was found to be the smaller than the currently stored min or if the element was found to be larger than the currently stored max. 
+We also checked if the element was divisible by the divisor. 
+Lastly, we added the element to a counter such that we could calculate the mean at the end. 
+We stored the min, max, and mean at addresses 0x43100008, 0x43100004, and 0x43100000 respectively. 
+We also pushed the number of entries divisible by the divisor to the stack at the end of the subroutine. 
 
 \subsection{Part C}
+For part C of the lab, our goal was to display the calculated values from part B: the min, max, mean, the number of numbers divisible by the divisor, and the numbers divisible by the divisor themselves. 
 
+In order to display information, we used the iprintf subroutine and defined our strings at the end of the program. To access each item to print, we accessed their location in memory and printed them to the MTTTY console accordingly.
 
 \section{Testing}
 Due to the shutdown of the university, we were unable to test our code in-person. 
@@ -222,6 +240,33 @@ We believe that these two parts of the lab were completed successfully as well.
 \newpage
 
 \section{Appendix}
+
+\subsection{Part A UML Diagram}
+\begin{figure}[H]
+   \includegraphics[width=0.4\textwidth]{UMLA.png}
+   \centering  
+   \caption{UML diagram for part A.} 
+   \label{figure:1}
+\end{figure}
+
+\subsection{Part B UML Diagram}
+\begin{figure}[H]
+   \includegraphics[width=0.6\textwidth]{UMLB.png}
+   \centering  
+   \caption{UML diagram for part B.} 
+   \label{figure:2}
+\end{figure}
+
+\subsection{Part C UML Diagram}
+\begin{figure}[H]
+   \includegraphics[width=0.4\textwidth]{UMLA.png}
+   \centering  
+   \caption{UML diagram for part C.} 
+   \label{figure:3}
+\end{figure}
+
+\newpage
+
 \subsection{Part A Assembler Code}
 \begin{lstlisting}
 	WelcomePrompt:
@@ -363,6 +408,8 @@ We believe that these two parts of the lab were completed successfully as well.
 	/*End of Strings **************************************************/
 \end{lstlisting}
 
+\newpage
+
 \subsection{Part B Assembler Code}
 \begin{lstlisting}
 	Stats:
@@ -450,12 +497,9 @@ We believe that these two parts of the lab were completed successfully as well.
 	
 	/*End of Subroutine **************************************************/
 	.data
-	/*All Strings placed here **************************************************/
-	
-	
-	
-	/*End of Strings **************************************************/
 \end{lstlisting}
+
+\newpage
 
 \subsection{Part C Assembler Code}
 \begin{lstlisting}
